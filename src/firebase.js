@@ -35,7 +35,7 @@ var MY_SECRET_SAUCE = {
   measurementId: process.env.measurementId     
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(MY_SECRET_SAUCE);
 //const analytics = getAnalytics(app);
 
 const db = getFirestore();
