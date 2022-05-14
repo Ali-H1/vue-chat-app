@@ -23,8 +23,18 @@ import {
 } from "firebase/firestore";
 
 import { ref, onUnmounted, computed } from "vue";
-import {firebaseConfig} from "./config.js"
+//import {firebaseConfig} from "./config.js"
 // Initialize Firebase
+var MY_SECRET_SAUCE = {
+  apiKey: process.env.apiKey ,
+  authDomain: process.env.authDomain,
+  projectId:  process.env.projectId,
+  storageBucket:  process.env.storageBucket ,
+  messagingSenderId:  process.env. messagingSenderId  ,
+  appId:  process.env.appId,
+  measurementId: process.env.measurementId     
+};
+
 const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
 
