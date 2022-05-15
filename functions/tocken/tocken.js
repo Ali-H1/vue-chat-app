@@ -1,6 +1,6 @@
 const process = require('process')
 
-const axios = require('axios')
+import { initializeApp } from "firebase/app";
 const qs = require('qs')
 
 const handler = async function (event) {

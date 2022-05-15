@@ -37,7 +37,7 @@ import { ref, onUnmounted, computed } from "vue";
 // };
 var app;
 fetch("../functions/tocken/tocken.js").then(res =>{
-  console.log(res.body)
+  console.log(res)
   app = res.body;
 })
 //const analytics = getAnalytics(app);
