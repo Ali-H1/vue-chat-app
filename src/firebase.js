@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-//import { initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 //import { firebase } from 'firebase/app'
 import { getAuth } from "firebase/auth";
@@ -36,14 +36,20 @@ import { ref, onUnmounted, computed } from "vue";
 //   measurementId: process.env.measurementId     
 // };
 var app;
-fetch("/.netlify/functions/tocken/tocken.js").then(res =>{
-  console.log(res)
-  app = res.body;
+fetch("/.netlify/functions/tocken").then(res =>{
+  //console.log(res.json())
+  return res.json();
+  }).then(function(data) {
+  app = data
+  console.log(data)
+  
+  //app = res.body;
 })
+console.log(app)
 //const analytics = getAnalytics(app);
-
-const db = getFirestore();
-const auth = getAuth(app);
+  app = initializeApp(app)
+  const db = getFirestore();
+  const auth = getAuth(app);
 // export function githubsignin(){
 //   const GithubProvider = new GithubAuthProvider();
 //   signInWithPopup(auth, GithubProvider)

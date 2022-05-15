@@ -1,6 +1,6 @@
 const process = require('process')
 
-import { initializeApp } from "firebase/app";
+const initializeApp = require('firebase/app');
 const qs = require('qs')
 
 const handler = async function (event) {
@@ -15,9 +15,10 @@ const handler = async function (event) {
   console.log('Constructed URL is ...', apiKey,appId,authDomain ,measurementId,messagingSenderId,projectId,storageBucket)
 
   try {
+    console.log("tocken try")
     return {
       statusCode: 200,
-      body:  initializeApp({
+      body:  JSON.stringify({
         "apiKey":apiKey,
         "appId":appId,
         "authDomain":authDomain ,
@@ -25,13 +26,14 @@ const handler = async function (event) {
         "messagingSenderId":messagingSenderId,
         "projectId":projectId,
         "storageBucket":storageBucket
-      }),
+      }),apiKey
     }
   } catch (error) {
-    const { data, headers, status, statusText } = error.response
+    console.log(error)
+    const {  status } = error.response
     return {
       statusCode: error.response.status,
-      body: JSON.stringify({ status, statusText, headers, data }),
+      body: JSON.stringify({ status }),
     }
   }
 }
