@@ -2,7 +2,8 @@
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 //import { firebase } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import "firebase/auth";
 import "firebase/firestore";
 import {
@@ -22,37 +23,13 @@ import {
 } from "firebase/firestore";
 
 import { ref, onUnmounted, computed } from "vue";
-//import handler from "../functions/tocken/tocken.js"
-//import {firebaseConfig} from "./config.js"
+import {firebaseConfig} from "./config.js"
 // Initialize Firebase
-// var MY_SECRET_SAUCE = {
-//   apiKey: process.env.apiKey ,
-//   authDomain: process.env.authDomain,
-//   projectId:  process.env.projectId,
-//   storageBucket:  process.env.storageBucket ,
-//   messagingSenderId:  process.env. messagingSenderId  ,
-//   appId:  process.env.appId,
-//   measurementId: process.env.measurementId     
-// };
-// var app;
-// var db;
-// var auth;
-// const start = async ()=>{
-//   const res = await fetch("/.netlify/functions/tocken")
-//     //console.log(res.json())
-//     const data = await res.json();
-//     console.log(data)
-//     app = data
-//     app = initializeApp(app)
-//   db = getFirestore();
-//   auth = getAuth(app);
-  
-//   //app = res.body;
-// }
-
-//   start()
-// console.log(app)
+const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
+
+const db = getFirestore();
+const auth = getAuth(app);
 // export function githubsignin(){
 //   const GithubProvider = new GithubAuthProvider();
 //   signInWithPopup(auth, GithubProvider)
@@ -82,26 +59,8 @@ import { ref, onUnmounted, computed } from "vue";
 //   });
 // }
 export var allcontacts_global = ref(null);
-var app;
-var db;
-var auth;
-const start = async ()=>{
-  const res = await fetch("/.netlify/functions/tocken")
-    //console.log(res.json())
-    const data = await res.json();
-    console.log(data)
-    app = data
-    app = initializeApp(app)
-  db = getFirestore();
-  auth = getAuth(app);
-  
-  //app = res.body;
-}
 
-
-export const useAuth = async ()=> {
-  await start()
-
+export function useAuth() {
   let user = ref(null);
   let allcontacts = ref(null);
   const unsubscribe = auth.onAuthStateChanged((_user) => {

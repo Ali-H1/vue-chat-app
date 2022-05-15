@@ -1,6 +1,6 @@
 <template>
   <SignInPage v-if="!isLogin"/>
-  <div class="row" v-else>
+  <div class="row">
     <Rightbar
       @messages="messages"
       @chat_uid="chat_id"
@@ -94,19 +94,8 @@ export default {
     SignInPage,
   },
   setup() {
-    let user;
-    let isLogin=false;
-    let signIn;
-    let signOut;
-    let isProcesed;
-    let allcontacts; 
-
-    if(isLogin){
-
       const { user, isLogin, signIn, signOut, isProcesed, allcontacts } =
       useAuth();
-      console.log(user, isLogin, signIn, signOut, isProcesed, allcontacts)
-    }
     const chat_uid = ref(null);
     let messages_ = ref(ref([]));
     const message_content = ref(null);
