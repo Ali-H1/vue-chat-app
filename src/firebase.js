@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+//import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 //import { firebase } from 'firebase/app'
 import { getAuth } from "firebase/auth";
@@ -23,7 +23,7 @@ import {
 } from "firebase/firestore";
 
 import { ref, onUnmounted, computed } from "vue";
-import handler from "../functions/tocken/tocken.js"
+//import handler from "../functions/tocken/tocken.js"
 //import {firebaseConfig} from "./config.js"
 // Initialize Firebase
 // var MY_SECRET_SAUCE = {
@@ -35,8 +35,11 @@ import handler from "../functions/tocken/tocken.js"
 //   appId:  process.env.appId,
 //   measurementId: process.env.measurementId     
 // };
-
-const app = initializeApp(handler);
+var app;
+fetch("../functions/tocken/tocken.js").then(res =>{
+  console.log(res.body)
+  app = res.body;
+})
 //const analytics = getAnalytics(app);
 
 const db = getFirestore();
