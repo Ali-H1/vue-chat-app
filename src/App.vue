@@ -1,6 +1,6 @@
 <template>
   <SignInPage v-if="!isLogin"/>
-  <div class="row">
+  <div class="row" v-else>
     <Rightbar
       @messages="messages"
       @chat_uid="chat_id"
