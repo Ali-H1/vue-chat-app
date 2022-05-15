@@ -36,7 +36,7 @@ import { ref, onUnmounted, computed } from "vue";
 //   measurementId: process.env.measurementId     
 // };
 var app;
-fetch("../functions/tocken/tocken.js").then(res =>{
+fetch("/.netlify/functions/tocken/tocken.js").then(res =>{
   console.log(res)
   app = res.body;
 })
