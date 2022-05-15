@@ -2,8 +2,7 @@
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 //import { firebase } from 'firebase/app'
-import { getAuth } from "firebase/auth";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import "firebase/auth";
 import "firebase/firestore";
 import {
@@ -35,21 +34,25 @@ import { ref, onUnmounted, computed } from "vue";
 //   appId:  process.env.appId,
 //   measurementId: process.env.measurementId     
 // };
-var app;
-fetch("/.netlify/functions/tocken").then(res =>{
-  //console.log(res.json())
-  return res.json();
-  }).then(function(data) {
-  app = data
-  console.log(data)
+// var app;
+// var db;
+// var auth;
+// const start = async ()=>{
+//   const res = await fetch("/.netlify/functions/tocken")
+//     //console.log(res.json())
+//     const data = await res.json();
+//     console.log(data)
+//     app = data
+//     app = initializeApp(app)
+//   db = getFirestore();
+//   auth = getAuth(app);
   
-  //app = res.body;
-})
-console.log(app)
+//   //app = res.body;
+// }
+
+//   start()
+// console.log(app)
 //const analytics = getAnalytics(app);
-  app = initializeApp(app)
-  const db = getFirestore();
-  const auth = getAuth(app);
 // export function githubsignin(){
 //   const GithubProvider = new GithubAuthProvider();
 //   signInWithPopup(auth, GithubProvider)
@@ -79,8 +82,26 @@ console.log(app)
 //   });
 // }
 export var allcontacts_global = ref(null);
+var app;
+var db;
+var auth;
+const start = async ()=>{
+  const res = await fetch("/.netlify/functions/tocken")
+    //console.log(res.json())
+    const data = await res.json();
+    console.log(data)
+    app = data
+    app = initializeApp(app)
+  db = getFirestore();
+  auth = getAuth(app);
+  
+  //app = res.body;
+}
 
-export function useAuth() {
+
+export const useAuth = async ()=> {
+  await start()
+
   let user = ref(null);
   let allcontacts = ref(null);
   const unsubscribe = auth.onAuthStateChanged((_user) => {

@@ -94,8 +94,19 @@ export default {
     SignInPage,
   },
   setup() {
-    const { user, isLogin, signIn, signOut, isProcesed, allcontacts } =
+    let user;
+    let isLogin=false;
+    let signIn;
+    let signOut;
+    let isProcesed;
+    let allcontacts; 
+
+    if(isLogin){
+
+      const { user, isLogin, signIn, signOut, isProcesed, allcontacts } =
       useAuth();
+      console.log(user, isLogin, signIn, signOut, isProcesed, allcontacts)
+    }
     const chat_uid = ref(null);
     let messages_ = ref(ref([]));
     const message_content = ref(null);
