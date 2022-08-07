@@ -2,7 +2,7 @@
   <div v-if="isLogin">
     <div
       class="d-flex flex-column flex-shrink-0 p-3 bg-light col-12"
-      style="height: 100vh;"
+      style="height: 100vh"
     >
       <a
         href="/"
@@ -11,13 +11,17 @@
         <svg class="bi me-2" width="40" height="32">
           <use xlink:href="#bootstrap" />
         </svg>
-        <span class="fs-4">{{ refuser.providerData[0].displayName.charAt(0).toUpperCase() + refuser.providerData[0].displayName.slice(1) }}</span>
+        <span class="fs-4">{{
+          refuser.providerData[0].displayName.charAt(0).toUpperCase() +
+          refuser.providerData[0].displayName.slice(1)
+        }}</span>
       </a>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="col-8">
           <div
             class="input-group input-group-sm ms-5 mb-3 col-5 search_username"
+            id="search_username"
           >
             <input
               type="text"
@@ -31,7 +35,22 @@
             <span class="input-group-text" id="basic-addon2">@gmail.com</span>
           </div>
         </li>
-        <div v-if="refallcontacts!==null && isLogin">
+        <li>
+          <div
+            class="alert alert-warning alert-dismissible fade .d-none"
+            role="alert"
+            id="alert"
+          >
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+            <strong>Not Found</strong> Contact Not found
+          </div>
+        </li>
+        <div v-if="refallcontacts !== null && isLogin">
           <div v-for="contact in refallcontacts" :key="contact.uid">
             <!-- {{ contact }} -->
             <li>
@@ -48,7 +67,10 @@
 
         <li>
           <div class="col-8"></div>
-          <div v-if="isLogin && refallcontacts===null" class="d-flex justify-content-center">
+          <div
+            v-if="isLogin && refallcontacts === null"
+            class="d-flex justify-content-center"
+          >
             <div class="spinner-border" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -72,7 +94,13 @@
             class="rounded-circle me-2"
             @click="signOut"
           />
-          <strong>{{ refuser.providerData[0].displayName.split(" ")[0].charAt(0).toUpperCase() + refuser.providerData[0].displayName.split(" ")[0].slice(1) }}</strong>
+          <strong>{{
+            refuser.providerData[0].displayName
+              .split(" ")[0]
+              .charAt(0)
+              .toUpperCase() +
+            refuser.providerData[0].displayName.split(" ")[0].slice(1)
+          }}</strong>
         </a>
         <ul
           class="dropdown-menu text-small shadow"
@@ -93,12 +121,15 @@
 import ChatCard from "@/components/ChatCard.vue";
 //import Usercard from "@/components/Usercard.vue";
 import { ref, watch } from "@vue/runtime-core";
-import { useAuth, user_search ,allcontacts_global} from "@/firebase";
+import { useAuth, user_search, allcontacts_global } from "@/firebase";
+// var alertList = document.querySelectorAll('.alert');
+// alertList.forEach(function (alert) {
+//   new bootstrap.Alert(alert)
+// })
 
 export default {
   components: {
     ChatCard,
-    
   },
   setup(props, { emit }) {
     let { user, isLogin, signIn, signOut, allcontacts, isProcesed } = useAuth();
@@ -120,6 +151,8 @@ export default {
       prop;
     });
     function search_user() {
+      document.getElementById("alert").className =
+        "alert alert-warning alert-dismissible fade .d-block";
       let found = false;
       for (let i = 0; i < allcontacts.value.length; i++) {
         if (
@@ -145,9 +178,9 @@ export default {
         });
         console.log(refallcontacts);
         console.log(refallcontacts.value);
+        console.log("refcontact", refallcontacts.value);
+        console.log(username_searched.value);
       }
-      console.log("refcontact", refallcontacts.value);
-      console.log(username_searched.value);
     }
     return {
       refallcontacts,

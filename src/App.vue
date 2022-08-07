@@ -104,7 +104,7 @@ export default {
       console.log(event);
     }
     function sendmessage(e) {
-      console.log(e)
+      console.log(user)
       if (e.ctrlKey || e.type =="click") {
         if (chat_uid.value != null) {
           const obj = {

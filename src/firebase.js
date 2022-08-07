@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 //import { firebase } from 'firebase/app'
+import E2E from "e2e-encryption";
 import { getAuth } from "firebase/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import "firebase/auth";
@@ -23,11 +24,11 @@ import {
 } from "firebase/firestore";
 
 import { ref, onUnmounted, computed } from "vue";
-import {firebaseConfig} from "./config.js"
+import { firebaseConfig } from "./config.js";
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
-
+var my_public_key = null;
 const db = getFirestore();
 const auth = getAuth(app);
 // export function githubsignin(){
@@ -59,15 +60,14 @@ const auth = getAuth(app);
 //   });
 // }
 export var allcontacts_global = ref(null);
+let user = ref(null);
 
 export function useAuth() {
-  let user = ref(null);
   let allcontacts = ref(null);
   const unsubscribe = auth.onAuthStateChanged((_user) => {
-    user.value = _user
-    if((sessionStorage.getItem("contacts"))!=null)
-    {
-      allcontacts.value = JSON.parse(sessionStorage.getItem("contacts"))
+    user.value = _user;
+    if (sessionStorage.getItem("contacts") != null) {
+      allcontacts.value = JSON.parse(sessionStorage.getItem("contacts"));
     }
   });
   onUnmounted(unsubscribe);
@@ -81,7 +81,7 @@ export function useAuth() {
         //console.log(token, "AA", user, "AA", credential);
         allcontacts.value = await adduser(user);
         allcontacts_global.value = allcontacts.value;
-        sessionStorage.setItem("contacts",JSON.stringify(allcontacts.value))
+        sessionStorage.setItem("contacts", JSON.stringify(allcontacts.value));
         console.log(result);
       })
       .catch((error) => {
@@ -105,7 +105,7 @@ export function useAuth() {
   };
   const signOut = () => {
     auth.signOut();
-    sessionStorage.setItem("contacts", null );
+    sessionStorage.setItem("contacts", null);
   };
   console.log("contact:::", user, allcontacts.value);
   return { user, isLogin, signIn, signOut, allcontacts, isProcesed };
@@ -113,36 +113,61 @@ export function useAuth() {
 
 export const adduser = async (user) => {
   let allcontacts = [];
+  // let a
+  // let reciever
+  // console.log(reciever = new E2E("N/4drIsPXvhZAPc+TWiUBtTwgUpC0UYWAzOpOhkwcQE=","BrRU1ueLjatAkagd1JNgEQGnqGAoUkrMdYVy6UnO5aI=",{}))
+  // console.log(a = instance.Encrypt({ Hello: 'World' },"N/4drIsPXvhZAPc+TWiUBtTwgUpC0UYWAzOpOhkwcQE=",{}))
+  // console.log(reciever.Decrypt(a,instance.publicKey,{},))
+  // console.log(instance)
+  // console.log(my_public_key)
   const docRef = doc(db, "users", user.providerData[0].uid);
-  try {
-    await setDoc(
-      docRef,
-      {
-        name: user.providerData[0].displayName,
-        email: user.providerData[0].email,
-        photo: user.providerData[0].photoURL,
-        uid: user.providerData[0].uid,
-        groups: [],
-      },
-      { merge: true }
-    );
-    console.log("Document written with ID: ", user.providerData[0].uid);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-  console.log("doneeeeee");
-  await getDoc(docRef).then((docSnap) => {
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      user.providerData[0].contacts = docSnap.data().contacts;
-      allcontacts = getcontacts(user.providerData[0].contacts);
-    } else {
-      console.log("No such document!");
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    try {
+      const instance = new E2E("", "", {});
+      my_public_key = instance;
+      await setDoc(
+        docRef,
+        {
+          name: user.providerData[0].displayName,
+          email: user.providerData[0].email,
+          photo: user.providerData[0].photoURL,
+          uid: user.providerData[0].uid,
+          groups: [],
+          PublicKey: instance.publicKey,
+          pkey: instance.privateKey,
+          contacts: [],
+        },
+        { merge: true }
+      );
+      console.log("Document written with ID: ", user.providerData[0].uid);
+    } catch (e) {
+      console.error("Error adding document: ", e);
     }
-  });
+    user.providerData[0].contacts = [];
+  } else {
+    await getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        user.providerData[0].contacts = docSnap.data().contacts;
+        allcontacts = getcontacts(user.providerData[0].contacts);
+        console.log(docSnap.data().keys.PublicKey,docSnap.data().keys.PrivateKey)
+        const instance = new E2E(
+          docSnap.data().keys.PublicKey,
+          docSnap.data().keys.PrivateKey,
+          {}
+        );
+        console.log((my_public_key = instance));
+      } else {
+        console.log("No such document!");
+      }
+    });
+  }
+
+  console.log("doneeeeee");
 
   console.log("allcontacts value adduser : ", allcontacts[0]);
-  sessionStorage.setItem("contacts",allcontacts)
+  sessionStorage.setItem("contacts", allcontacts);
 
   return allcontacts;
 };
@@ -171,6 +196,10 @@ export const getcontacts = async (contacts) => {
 export const import_chat_data = async (chat_uid) => {
   console.log(chat_uid.value);
   let result = ref(null);
+  let reciever_uid = String(chat_uid.value);
+  console.log(user.value.providerData[0].uid)
+  reciever_uid=reciever_uid.replace(user.value.providerData[0].uid, "").replace(",", "");
+  console.log(reciever_uid)
   try {
     const docRef = doc(db, "messages", chat_uid.value);
     onSnapshot(docRef, (doc) => {
@@ -178,10 +207,25 @@ export const import_chat_data = async (chat_uid) => {
         if (doc.exists()) {
           console.log("Current data: ", doc.data());
           result.value = doc.data();
+          let reciever = new E2E(
+            doc.data().keys[reciever_uid]["PublicKey"],
+            doc.data().keys[reciever_uid]["PrivateKey"],
+            {}
+          );
+          for (let mess of result.value.messages) {
+            const senders_key = mess.senders_public_key;
+            console.log(mess.message)
+            if (senders_key == my_public_key.publicKey) {
+              mess.message= reciever.Decrypt(mess.message, senders_key, {}).txt;
+            } else {
+              mess.message = my_public_key.Decrypt(mess.message, senders_key, {}).txt;
+            }
+            console.log("mess: ",mess.message)
+          }
           return result;
         } else throw "not existing";
       } catch (err) {
-        console.log("error import");
+        console.log("error import",err);
         if (err == "not existing") {
           console.log("error import in if");
           try {
@@ -216,19 +260,43 @@ export const snapshot = async (chat_uid) => {
   }
 };
 export const sendMessage = async (txt, chat_uid, sender) => {
-  // if (chat_uid!=null) return;
+  let reciever_uid = String(chat_uid);
+  reciever_uid=reciever_uid.replace(user.value.providerData[0].uid, "").replace(",", "");
+  console.log(reciever_uid)
+  let reciever_public_key;
+  const docRef = doc(db, "messages", chat_uid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    console.log(docSnap.data().keys[reciever_uid])
+    reciever_public_key = docSnap.data().keys[reciever_uid]["PublicKey"]
+    console.log(reciever_public_key)
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
+  const temp = txt;
   var time = new Date();
   console.log(txt, chat_uid, sender);
   const docref = doc(db, "messages", chat_uid);
   const obj = {
-    message: txt,
+    message: my_public_key.Encrypt({ txt: temp }, reciever_public_key, {}),
     sender_data: sender,
+    senders_public_key: my_public_key.publicKey,
     time: time.getHours() + ":" + time.getMinutes(),
     date: {
       year: time.getFullYear(),
       mounth: time.getMonth() + 1,
       day: time.getDate(),
     },
+    read: false,
+    messgaeID:
+      String(time.getFullYear()) +
+      String(time.getMonth() + 1) +
+      String(time.getDate()) +
+      String(time.getHours()) +
+      ":" +
+      String(time.getMinutes()),
+    // String(time.getSeconds())
   };
   console.log(obj);
   // Atomically add a new region to the "regions" array field.
@@ -240,6 +308,24 @@ export const sendMessage = async (txt, chat_uid, sender) => {
     console.log(err);
   }
 };
+// export const Messageread = async (txt, date, time) => {
+//   // if (chat_uid!=null) return;
+//   var time = new Date();
+//   console.log(txt, chat_uid, sender);
+//   const docref = doc(db, "messages", chat_uid);
+//   const obj = {
+//     read: true,
+//   };
+//   console.log(obj);
+//   // Atomically add a new region to the "regions" array field.
+//   try {
+//     await updateDoc(docref, {
+//       messages: arrayUnion(obj),
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 export const user_search = async (user, user_uid, contacts) => {
   let contacts_new = [];
   const docRef = query(
