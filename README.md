@@ -32,6 +32,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - - [ ] change chat theme
 - - [ ] last seen option
 - - [ ] delete account
+- [ ] Unread messages
 - [ ] message seen (double cheeckmarks)
 - [ ] restore data on reload 
 - [ ] responsve design for mobile phones
