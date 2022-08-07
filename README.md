@@ -37,4 +37,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - [ ] responsve design for mobile phones
 - [ ] resizable menue bar
 - [ ] support media(photo,movie,docs)
-- [ ] end to end encryption
+- [X] end to end encryption
