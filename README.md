@@ -1,6 +1,6 @@
 # chat-app
 ## Demo
-https://vue-chat-app-0fc.netlify.app/
+[Demo](https://vue-chat-app.netlify.app/)
 ## Project setup
 ```
 npm install
