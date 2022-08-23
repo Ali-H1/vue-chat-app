@@ -35,7 +35,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - [ ] Unread messages
 - [ ] message seen (double cheeckmarks)
 - [ ] restore data on reload 
-- [ ] responsve design for mobile phones
-- [ ] resizable menue bar
+- [ ] fully responsve design for mobile phones
+- [X] resizable menue bar
 - [ ] support media(photo,movie,docs)
 - [X] end to end encryption
