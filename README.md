@@ -34,8 +34,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - - [ ] delete account
 - [ ] Unread messages
 - [ ] message seen (double cheeckmarks)
-- [ ] restore data on reload 
+- [X] restore data on reload 
 - [ ] fully responsve design for mobile phones
 - [X] resizable menue bar
 - [ ] support media(photo,movie,docs)
+- [ ] FCM push notification
 - [X] end to end encryption
